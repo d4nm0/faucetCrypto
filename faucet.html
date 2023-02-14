@@ -31,6 +31,7 @@
         const flipCoinButton = document.getElementById("flip-coin");
         const coinElement = document.getElementById("coin");
         const message = document.getElementById("message");
+        const nomberSatTemp = document.getElementById("nomberSatTemp");
         const sensatbtn = document.getElementById("senSat");
 
         // Obtenez une référence du service de base de données
@@ -75,15 +76,16 @@
           setTimeout(function() {
             const flip = Math.random() < 0.5 ? "heads" : "tails";
             if ("tails" === flip) {
-              let nombre = Math.floor(Math.random() * 10) + 1;
-              message.textContent = "Vous avez gagné " + nombre + "!\n mettez votre invoice dans le champs ci-dessous";
+              const nombre = Math.floor(Math.random() * 10) + 1;
+              message.textContent = "You won " + nombre + "!\n Put your LN address in the field above.";
+              nomberSatTemp.innerHTML = nombre;
               const textfield = document.getElementById("invoiceLn");
               textfield.style.display = "block";
               const senSat = document.getElementById("senSat");
               senSat.style.display = "block";
               VerifyIp();
             } else {
-              message.textContent = "Désolé, vous avez perdu.";
+              message.textContent = "Sorry, you lost.";
               VerifyIp();
             }
             coinElement.style.animation = "";
@@ -172,18 +174,21 @@
 
         function payInvoice() {
           let valeur = document.getElementById("invoiceLn").value;
+          let nomberSatTemp = document.getElementById("nomberSatTemp").innerText;
+
           var myHeaders = new Headers();
-          myHeaders.append("Content-Type", "application/json");
           myHeaders.append("X-Api-Key", "pak_t8EzUyd9zVYZDSZGjFqyPDwbAJYUCUPG");
+          myHeaders.append("Content-Type", "application/json");
           myHeaders.append(
             "Cookie",
-            "PHPSESSID=vmusii002gi0u81rg9ugc3qen8; _csrf=d7b313e5180ba04e81df35fbbbdd4f06e79a0b5ce0a80d587aa2a064298a2b29a%3A2%3A%7Bi%3A0%3Bs%3A5%3A%22_csrf%22%3Bi%3A1%3Bs%3A32%3A%22I_coy7_dPlmOeIuWqUSFjI7ZxfxZCVpR%22%3B%7D"
+            "PHPSESSID=vmusii002gi0u81rg9ugc3qen8; _csrf=9dc3079c7005e0afb7372c3ddfba5f6a6336764c506f3829efae5415ad7ff80fa%3A2%3A%7Bi%3A0%3Bs%3A5%3A%22_csrf%22%3Bi%3A1%3Bs%3A32%3A%22HvZ_FH9j4lZ9pYJm3BdYXQXSndoY2oM8%22%3B%7D"
           );
 
           var raw = JSON.stringify({
-            payment_request: valeur,
+            amt_msat: nomberSatTemp * 1000,
+            ln_address: valeur,
             passThru: {
-              ticketId: "12"
+              tick: "tock"
             }
           });
 
@@ -194,14 +199,14 @@
             redirect: "follow"
           };
 
-          fetch("https://api.lnpay.co/v1/wallet/waklw_TMgAfKiRkP2SGDDZfBuXYdP/withdraw", requestOptions)
+          fetch("https://api.lnpay.co/v1/wallet/waka_6aG8iblb9i4M9Bx0Qz4ZCFIQ/lnurlp/pay", requestOptions)
             .then(response => response.text())
             .then(result => console.log(result))
             .catch(error => console.log("error", error));
         }
       });
     </script>
-    <title>Jeu de pile ou face</title>
+    <title>Heads or tails game</title>
     <style>
       #coin {
         position: absolute;
@@ -224,10 +229,22 @@
     </style>
   </head>
   <body>
-    <h1>Jeu de pile ou face</h1>
-    <button id="flip-coin" class="button" style="display: none;">Lancer la pièce</button> <span id="playActivate"></span>
-    <input type="text" id="invoiceLn" placeholder="invoice with same amount" style="display: none;" />
-    <button id="senSat" style="display: none;">send sats</button>
+    <h1>Heads or tails game</h1>
+    <p>
+      You can flip a coin every 30 minutes.<br />
+      Depending on the result, you will win a certain number of coins, <br />which you can withdraw by providing your
+      address.(ex. d4nm0@pay.bbw.sv)
+    </p>
+    <p>You can toss the coin every 30 minutes.</p>
+    <p>
+      This doesn't work on its own, it needs to be hosted and the earned coins need to come from somewhere. <br />You can donate
+      here: d4nm0@pay.bbw.sv
+    </p>
+    <button id="flip-coin" class="button" style="display: none;">Flip the coin</button>
+
+    <span id="playActivate" style="display: none;"></span>
+    <input type="text" id="invoiceLn" placeholder="Ln Adresse (ex. d4nm0@pay.bbw.sv)" style="display: none;" />
+    <button id="senSat" style="display: none;">send sats</button> <span id="nomberSatTemp" style="display: none;"></span>
     <p id="message"></p>
     <div id="coin"></div>
   </body>
