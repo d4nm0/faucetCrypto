@@ -31,6 +31,7 @@
         const flipCoinButton = document.getElementById("flip-coin");
         const coinElement = document.getElementById("coin");
         const message = document.getElementById("message");
+        const sensatbtn = document.getElementById("senSat");
 
         // Obtenez une référence du service de base de données
         const db = getDatabase(app);
@@ -39,6 +40,9 @@
 
         VerifyIp();
 
+        sensatbtn.addEventListener("click", function() {
+          payInvoice();
+        });
         flipCoinButton.addEventListener("click", function() {
           var dateTime = Date.now() / 1000;
           console.log(dateTime);
@@ -71,7 +75,12 @@
           setTimeout(function() {
             const flip = Math.random() < 0.5 ? "heads" : "tails";
             if ("tails" === flip) {
-              message.textContent = "Vous avez gagné!";
+              let nombre = Math.floor(Math.random() * 10) + 1;
+              message.textContent = "Vous avez gagné " + nombre + "!\n mettez votre invoice dans le champs ci-dessous";
+              const textfield = document.getElementById("invoiceLn");
+              textfield.style.display = "block";
+              const senSat = document.getElementById("senSat");
+              senSat.style.display = "block";
               VerifyIp();
             } else {
               message.textContent = "Désolé, vous avez perdu.";
@@ -104,7 +113,10 @@
                             playActivate = true;
                             myVarElement.innerHTML = playActivate;
                             myButton.forEach(button => {
-                              button.disabled = false;
+                              console.log(button);
+                              if (button.id === "flip-coin") {
+                                button.disabled = false;
+                              }
                             });
                             monBouton.style.display = "block";
                           } else {
@@ -112,7 +124,9 @@
                             playActivate = false;
                             myVarElement.innerHTML = playActivate;
                             myButton.forEach(button => {
-                              button.disabled = true;
+                              if (button.id === "flip-coin") {
+                                button.disabled = true;
+                              }
                             });
                             monBouton.style.display = "block";
                           }
@@ -121,7 +135,9 @@
                           playActivate = false;
                           myVarElement.innerHTML = playActivate;
                           myButton.forEach(button => {
-                            button.disabled = false;
+                            if (button.id === "flip-coin") {
+                              button.disabled = false;
+                            }
                           });
                           monBouton.style.display = "block";
                         }
@@ -131,7 +147,9 @@
                       playActivate = true;
                       myVarElement.innerHTML = playActivate;
                       myButton.forEach(button => {
-                        button.disabled = false;
+                        if (button.id === "flip-coin") {
+                          button.disabled = false;
+                        }
                       });
                       monBouton.style.display = "block";
                     }
@@ -141,7 +159,9 @@
                     playActivate = false;
                     myVarElement.innerHTML = playActivate;
                     myButton.forEach(button => {
-                      button.disabled = true;
+                      if (button.id === "flip-coin") {
+                        button.disabled = true;
+                      }
                     });
                     monBouton.style.display = "block";
                   });
@@ -151,6 +171,7 @@
         }
 
         function payInvoice() {
+          let valeur = document.getElementById("invoiceLn").value;
           var myHeaders = new Headers();
           myHeaders.append("Content-Type", "application/json");
           myHeaders.append("X-Api-Key", "pak_t8EzUyd9zVYZDSZGjFqyPDwbAJYUCUPG");
@@ -160,7 +181,7 @@
           );
 
           var raw = JSON.stringify({
-            payment_request: "lninvoice",
+            payment_request: valeur,
             passThru: {
               ticketId: "12"
             }
@@ -205,6 +226,8 @@
   <body>
     <h1>Jeu de pile ou face</h1>
     <button id="flip-coin" class="button" style="display: none;">Lancer la pièce</button> <span id="playActivate"></span>
+    <input type="text" id="invoiceLn" placeholder="invoice with same amount" style="display: none;" />
+    <button id="senSat" style="display: none;">send sats</button>
     <p id="message"></p>
     <div id="coin"></div>
   </body>
