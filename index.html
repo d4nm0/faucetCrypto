@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Win free bitcoins every 30 minutes with our Bitcoin faucet - a 50/50 chance to win! (instant withdrawal)">
+    <meta name="description"
+        content="Win free bitcoins every 30 minutes with our Bitcoin faucet - a 50/50 chance to win! (instant withdrawal)">
     <meta name="keywords" content="Bitcoin, faucet, token, win, free, cryptocurrency, earn">
     <meta name="author" content="claimbitcoin.fr">
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
@@ -21,7 +22,7 @@
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <meta name="coinzilla" content="3c4e7051e225e66dbd7a279c6dcf57c5" />
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1000141263792286"
-     crossorigin="anonymous"></script>
+        crossorigin="anonymous"></script>
     <script>
         var script = document.createElement("script");
         script.dataset.cache = true;
@@ -152,6 +153,7 @@
                                                 });
                                                 monBouton.style.display = "block";
                                             } else {
+
                                                 console.log("tu peux pas jouer sa fais pas 30 min");
                                                 playActivate = false;
                                                 myVarElement.innerHTML = playActivate;
@@ -161,6 +163,48 @@
                                                     }
                                                 });
                                                 monBouton.style.display = "block";
+
+                                                // Récupérer la valeur de la dernière date de jeu et la convertir en secondes
+                                                let derniereDateDeJeu = elm.val().datetime; // Exemple de valeur en secondes
+                                                let derniereDateDeJeuEnSecondes = derniereDateDeJeu - (Date.now() / 1000);
+
+                                                // Définir le temps de départ et le temps de fin
+                                                let tempsDepart = Date.now();
+                                                let tempsFin = tempsDepart + (derniereDateDeJeuEnSecondes * 1000) + (1800 * 1000);
+
+                                                // Récupérer l'élément HTML où afficher le compte à rebours
+                                                let compteARebours = document.getElementById("compte-a-rebours");
+
+                                                let compteminutes = document.getElementById("compte-minutes");
+                                                let comptesecondes = document.getElementById("compte-secondes");
+
+                                                let textcompteur = document.getElementById("text-compteur");
+
+                                                // Appeler la fonction de mise à jour toutes les secondes
+                                                setInterval(function () {
+                                                    // Calculer le temps restant en secondes
+                                                    let tempsRestant = Math.ceil((tempsFin - Date.now()) / 1000);
+
+                                                    if (tempsRestant > 0) {
+                                                        // Calculer les minutes et secondes restantes
+                                                        let minutesRestantes = Math.floor(tempsRestant / 60);
+                                                        let secondesRestantes = tempsRestant % 60;
+
+                                                        // Afficher le compte à rebours dans l'élément HTML
+                                                        // compteARebours.innerHTML = "" + minutesRestantes + " min " + secondesRestantes + " sec";
+
+                                                        compteminutes.innerHTML = "<h2>" + minutesRestantes + "</h2>" + "<p>Minutes</p>";
+                                                        comptesecondes.innerHTML = "<h2>" + secondesRestantes + "</h2>" + "<p>Secondes</p>";
+                                                        textcompteur.innerHTML = "Time before the next coin toss";
+                                                    } else {
+                                                        window.location.reload();
+                                                        // Le temps est écoulé
+                                                        compteARebours.innerHTML = "Vous pouvez jouer !";
+                                                    }
+                                                }
+                                                    , 1000);
+
+
                                             }
                                         } else {
                                             console.log("ip not exist");
@@ -364,6 +408,7 @@ background: linear-gradient(to right, #796FFD 0%, #D7C4FF 100%);
                     can donate
                     here: d4nm0@pay.bbw.sv
                 </p>
+
                 <button id="flip-coin" class="button" style="display: none;">Flip the coin</button>
 
                 <span id="playActivate" style="display: none;"></span>
@@ -375,7 +420,24 @@ background: linear-gradient(to right, #796FFD 0%, #D7C4FF 100%);
                 <div id="coin" style="    left: 50%;
     right: 50%;
     transform: translate(-50%, 0);"></div>
-                <div class="col-lg-6"></div>
+                <div class="col-lg-6">
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div id="compte-a-rebours" style="
+                margin-top: 50vh;
+                transform: translateY(-50%);">
+                    <p id="text-compteur"></p>
+                    <div>
+                        <div id="compte-minutes" style="margin: 1%;display: inline-block;">
+
+                        </div>
+                        <div id="compte-secondes" style="margin: 1%;display: inline-block;">
+
+                        </div>
+                    </div>
+
+                </div>
             </div>
 
         </div>
