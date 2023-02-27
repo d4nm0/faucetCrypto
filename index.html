@@ -74,55 +74,56 @@
                 payInvoice();
             });
             flipCoinButton.addEventListener("click", function () {
-                const myButton = document.getElementsByClassName("button_flip");
-                myButton.disabled = false;
-                setTimeout(function () {
-                    var dateTime = Date.now() / 1000;
-                    console.log(dateTime);
-                    // Obtenez une référence au nœud où vous voulez ajouter des données
-                    const myRef = ref(db, "UserLog");
+                console.log('click');
+                const myButton = document.getElementsByClassName("button_flip")[0];
 
-                    // Utilisez la méthode push() pour ajouter un nouveau nœud enfant avec une clé unique
-                    const newChildRef = push(myRef);
+                myButton.disabled = true;
+                console.log(myButton);
+                var dateTime = Date.now() / 1000;
+                console.log(dateTime);
+                // Obtenez une référence au nœud où vous voulez ajouter des données
+                const myRef = ref(db, "UserLog");
 
-                    var requestOptions = {
-                        method: "GET",
-                        redirect: "follow"
-                    };
+                // Utilisez la méthode push() pour ajouter un nouveau nœud enfant avec une clé unique
+                const newChildRef = push(myRef);
 
-                    fetch("https://api.ipify.org?format=json", requestOptions)
-                        .then(response => response.text())
-                        .then(result => {
-                            if (result) {
-                                var resultJson = JSON.parse(result);
-                                // Définissez des données sur le nouveau nœud enfant à l'aide de la méthode set()
-                                set(ref(db, "UserLog/" + resultJson.ip.replace(/\./g, "x")), {
-                                    ip: resultJson.ip,
-                                    datetime: dateTime
-                                });
-                            }
-                        })
-                        .catch(error => console.log("error", error));
+                var requestOptions = {
+                    method: "GET",
+                    redirect: "follow"
+                };
 
-                    coinElement.style.animation = "flipCoin 1s ease-in-out forwards";
-                    setTimeout(function () {
-                        const flip = Math.random() < 0.5 ? "heads" : "tails";
-                        if ("tails" === flip) {
-                            const nombre = Math.floor(Math.random() * 10) + 1;
-                            message.textContent = "You won " + nombre + "!\n Put your LN address in the field above.";
-                            nomberSatTemp.innerHTML = nombre;
-                            const textfield = document.getElementById("invoiceLn");
-                            textfield.style.display = "block";
-                            const senSat = document.getElementById("senSat");
-                            senSat.style.display = "block";
-                            VerifyIp();
-                        } else {
-                            message.textContent = "Sorry, you lost.";
-                            VerifyIp();
+                fetch("https://api.ipify.org?format=json", requestOptions)
+                    .then(response => response.text())
+                    .then(result => {
+                        if (result) {
+                            var resultJson = JSON.parse(result);
+                            // Définissez des données sur le nouveau nœud enfant à l'aide de la méthode set()
+                            set(ref(db, "UserLog/" + resultJson.ip.replace(/\./g, "x")), {
+                                ip: resultJson.ip,
+                                datetime: dateTime
+                            });
                         }
-                        coinElement.style.animation = "";
-                    }, 1000);
-                }, 3000);
+                    })
+                    .catch(error => console.log("error", error));
+
+                coinElement.style.animation = "flipCoin 1s ease-in-out forwards";
+                setTimeout(function () {
+                    const flip = Math.random() < 0.5 ? "heads" : "tails";
+                    if ("tails" === flip) {
+                        const nombre = Math.floor(Math.random() * 10) + 1;
+                        message.textContent = "You won " + nombre + "!\n Put your LN address in the field above.";
+                        nomberSatTemp.innerHTML = nombre;
+                        const textfield = document.getElementById("invoiceLn");
+                        textfield.style.display = "block";
+                        const senSat = document.getElementById("senSat");
+                        senSat.style.display = "block";
+                        VerifyIp();
+                    } else {
+                        message.textContent = "Sorry, you lost.";
+                        VerifyIp();
+                    }
+                    coinElement.style.animation = "";
+                }, 1000);
             });
 
             function VerifyIp() {
@@ -394,7 +395,7 @@ background: linear-gradient(to right, #796FFD 0%, #D7C4FF 100%);
                     here: d4nm0@pay.bbw.sv
                 </p>
 
-                <button id="flip-coin" class="button" style="display: none;">Flip the coin</button>
+                <button id="flip-coin" class="button button_flip" style="display: none;">Flip the coin</button>
 
                 <span id="playActivate" style="display: none;"></span>
                 <input type="text" id="invoiceLn" placeholder="Ln Adresse (ex. d4nm0@pay.bbw.sv)"
