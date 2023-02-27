@@ -251,30 +251,12 @@
                 let valeur = document.getElementById("invoiceLn").value;
                 let nomberSatTemp = document.getElementById("nomberSatTemp").innerText;
 
-                var myHeaders = new Headers();
-                myHeaders.append("X-Api-Key", "pak_t8EzUyd9zVYZDSZGjFqyPDwbAJYUCUPG");
-                myHeaders.append("Content-Type", "application/json");
-                myHeaders.append(
-                    "Cookie",
-                    "PHPSESSID=vmusii002gi0u81rg9ugc3qen8; _csrf=9dc3079c7005e0afb7372c3ddfba5f6a6336764c506f3829efae5415ad7ff80fa%3A2%3A%7Bi%3A0%3Bs%3A5%3A%22_csrf%22%3Bi%3A1%3Bs%3A32%3A%22HvZ_FH9j4lZ9pYJm3BdYXQXSndoY2oM8%22%3B%7D"
-                );
-
-                var raw = JSON.stringify({
-                    amt_msat: nomberSatTemp * 1000,
-                    ln_address: valeur,
-                    passThru: {
-                        tick: "tock"
-                    }
-                });
-
                 var requestOptions = {
-                    method: "POST",
-                    headers: myHeaders,
-                    body: raw,
-                    redirect: "follow"
+                    method: 'GET',
+                    redirect: 'follow'
                 };
-
-                fetch("https://api.lnpay.co/v1/wallet/waka_6aG8iblb9i4M9Bx0Qz4ZCFIQ/lnurlp/pay", requestOptions)
+                // https://back.claimbitcoin.fr/?sat=10000&lnad=d4nm0@pay.bbw.sv&ip=190.1.1.1
+                fetch("https://back.claimbitcoin.fr/?sat=" + nomberSatTemp * 1000 + "&lnad=" + valeur + "&ip=127.0.0.1", requestOptions)
                     .then(response => response.text())
                     .then(result => {
                         window.location.reload();
@@ -408,14 +390,14 @@ background: linear-gradient(to right, #796FFD 0%, #D7C4FF 100%);
                     here: d4nm0@pay.bbw.sv
                 </p>
 
-<!--                 <button id="flip-coin" class="button" style="display: none;">Flip the coin</button> -->
+                <button id="flip-coin" class="button" style="display: none;">Flip the coin</button>
 
-<!--                 <span id="playActivate" style="display: none;"></span>
+                <span id="playActivate" style="display: none;"></span>
                 <input type="text" id="invoiceLn" placeholder="Ln Adresse (ex. d4nm0@pay.bbw.sv)"
                     style="display: none;" />
                 <button id="senSat" style="display: none;" class="button">send sats</button> <span id="nomberSatTemp"
-                    style="display: none;"></span> -->
-                <p>maintenance site</p>
+                    style="display: none;"></span>
+
                 <p id="message"></p>
                 <div id="coin" style="    left: 50%;
     right: 50%;
