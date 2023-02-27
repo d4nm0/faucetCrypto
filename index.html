@@ -74,6 +74,12 @@
                 payInvoice();
             });
             flipCoinButton.addEventListener("click", function () {
+                const myButton = document.querySelectorAll("button");
+                myButton.forEach(button => {
+                    if (button.id === "flip-coin") {
+                        button.disabled = false;
+                    }
+                });
                 var dateTime = Date.now() / 1000;
                 console.log(dateTime);
                 // Obtenez une référence au nœud où vous voulez ajouter des données
