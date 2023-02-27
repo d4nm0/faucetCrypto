@@ -67,6 +67,7 @@
             const db = getDatabase(app);
             const dbRef = ref(getDatabase());
             var playActivate = false;
+            var AlreadyPlay = false;
 
             VerifyIp();
 
@@ -74,56 +75,60 @@
                 payInvoice();
             });
             flipCoinButton.addEventListener("click", function () {
-                console.log('click');
+                if (playActivate == false) {
+                    AlreadyPlay = true;
+                }
                 const myButton = document.getElementsByClassName("button_flip")[0];
-
                 myButton.disabled = true;
-                console.log(myButton);
-                var dateTime = Date.now() / 1000;
-                console.log(dateTime);
-                // Obtenez une référence au nœud où vous voulez ajouter des données
-                const myRef = ref(db, "UserLog");
+                if (AlreadyPlay === false) {
+                    var dateTime = Date.now() / 1000;
+                    // Obtenez une référence au nœud où vous voulez ajouter des données
+                    const myRef = ref(db, "UserLog");
 
-                // Utilisez la méthode push() pour ajouter un nouveau nœud enfant avec une clé unique
-                const newChildRef = push(myRef);
+                    // Utilisez la méthode push() pour ajouter un nouveau nœud enfant avec une clé unique
+                    const newChildRef = push(myRef);
 
-                var requestOptions = {
-                    method: "GET",
-                    redirect: "follow"
-                };
+                    var requestOptions = {
+                        method: "GET",
+                        redirect: "follow"
+                    };
 
-                fetch("https://api.ipify.org?format=json", requestOptions)
-                    .then(response => response.text())
-                    .then(result => {
-                        if (result) {
-                            var resultJson = JSON.parse(result);
-                            // Définissez des données sur le nouveau nœud enfant à l'aide de la méthode set()
-                            set(ref(db, "UserLog/" + resultJson.ip.replace(/\./g, "x")), {
-                                ip: resultJson.ip,
-                                datetime: dateTime
-                            });
+                    fetch("https://api.ipify.org?format=json", requestOptions)
+                        .then(response => response.text())
+                        .then(result => {
+                            if (result) {
+                                var resultJson = JSON.parse(result);
+                                // Définissez des données sur le nouveau nœud enfant à l'aide de la méthode set()
+                                set(ref(db, "UserLog/" + resultJson.ip.replace(/\./g, "x")), {
+                                    ip: resultJson.ip,
+                                    datetime: dateTime
+                                });
+                            }
+                        })
+                        .catch(error => console.log("error", error));
+
+                    coinElement.style.animation = "flipCoin 1s ease-in-out forwards";
+                    setTimeout(function () {
+                        const flip = Math.random() < 0.5 ? "heads" : "tails";
+                        if ("tails" === flip) {
+                            const nombre = Math.floor(Math.random() * 10) + 1;
+                            message.textContent = "You won " + nombre + "!\n Put your LN address in the field above.";
+                            nomberSatTemp.innerHTML = nombre;
+                            const textfield = document.getElementById("invoiceLn");
+                            textfield.style.display = "block";
+                            const senSat = document.getElementById("senSat");
+                            senSat.style.display = "block";
+                            VerifyIp();
+                        } else {
+                            message.textContent = "Sorry, you lost.";
+                            VerifyIp();
                         }
-                    })
-                    .catch(error => console.log("error", error));
+                        coinElement.style.animation = "";
+                    }, 1000);
+                } else {
+                    console.log("AlreadyPlay")
+                }
 
-                coinElement.style.animation = "flipCoin 1s ease-in-out forwards";
-                setTimeout(function () {
-                    const flip = Math.random() < 0.5 ? "heads" : "tails";
-                    if ("tails" === flip) {
-                        const nombre = Math.floor(Math.random() * 10) + 1;
-                        message.textContent = "You won " + nombre + "!\n Put your LN address in the field above.";
-                        nomberSatTemp.innerHTML = nombre;
-                        const textfield = document.getElementById("invoiceLn");
-                        textfield.style.display = "block";
-                        const senSat = document.getElementById("senSat");
-                        senSat.style.display = "block";
-                        VerifyIp();
-                    } else {
-                        message.textContent = "Sorry, you lost.";
-                        VerifyIp();
-                    }
-                    coinElement.style.animation = "";
-                }, 1000);
             });
 
             function VerifyIp() {
@@ -251,22 +256,27 @@
             }
 
             function payInvoice() {
-                const senSat = document.getElementById("senSat");
-                senSat.style.display = "none";
-                let valeur = document.getElementById("invoiceLn").value;
-                let nomberSatTemp = document.getElementById("nomberSatTemp").innerText;
+                if (AlreadyPlay === false) {
+                    const senSat = document.getElementById("senSat");
+                    senSat.style.display = "none";
+                    let valeur = document.getElementById("invoiceLn").value;
+                    let nomberSatTemp = document.getElementById("nomberSatTemp").innerText;
 
-                var requestOptions = {
-                    method: 'GET',
-                    redirect: 'follow'
-                };
-                // https://back.claimbitcoin.fr/?sat=10000&lnad=d4nm0@pay.bbw.sv&ip=190.1.1.1
-                fetch("https://back.claimbitcoin.fr/?sat=" + nomberSatTemp * 1000 + "&lnad=" + valeur + "&ip=127.0.0.1", requestOptions)
-                    .then(response => response.text())
-                    .then(result => {
-                        window.location.reload();
-                    })
-                    .catch(error => console.log("error", error));
+                    var requestOptions = {
+                        method: 'GET',
+                        redirect: 'follow'
+                    };
+                    // https://back.claimbitcoin.fr/?sat=10000&lnad=d4nm0@pay.bbw.sv&ip=190.1.1.1
+                    fetch("https://back.claimbitcoin.fr/?sat=" + nomberSatTemp * 1000 + "&lnad=" + valeur + "&ip=127.0.0.1", requestOptions)
+                        .then(response => response.text())
+                        .then(result => {
+                            window.location.reload();
+                        })
+                        .catch(error => console.log("error", error));
+                } else {
+                    alert("You can't play, you have to wait 30 minutes");
+                }
+
             }
         });
     </script>
