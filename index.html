@@ -68,6 +68,7 @@
             const dbRef = ref(getDatabase());
             var playActivate = false;
             var AlreadyPlay = false;
+            var ipuser = ""
 
             VerifyIp();
 
@@ -144,6 +145,7 @@
                     .then(result => {
                         if (result) {
                             var resultJson = JSON.parse(result);
+                            ipuser = resultJson.ip;
                             get(child(dbRef, `UserLog/` + resultJson.ip.replace(/\./g, "x")))
                                 .then(elm => {
                                     if (elm.exists()) {
@@ -267,7 +269,7 @@
                         redirect: 'follow'
                     };
                     // https://back.claimbitcoin.fr/?sat=10000&lnad=d4nm0@pay.bbw.sv&ip=190.1.1.1
-                    fetch("https://back.claimbitcoin.fr/?sat=" + nomberSatTemp * 1000 + "&lnad=" + valeur + "&ip=127.0.0.1", requestOptions)
+                    fetch("https://back.claimbitcoin.fr/?sat=" + nomberSatTemp * 1000 + "&lnad=" + valeur + "&ip="+ipuser, requestOptions)
                         .then(response => response.text())
                         .then(result => {
                             window.location.reload();
