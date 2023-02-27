@@ -74,12 +74,8 @@
                 payInvoice();
             });
             flipCoinButton.addEventListener("click", function () {
-                const myButton = document.querySelectorAll("button");
-                myButton.forEach(button => {
-                    if (button.id === "flip-coin") {
-                        button.disabled = false;
-                    }
-                });
+                const myButton = document.getElementsByClassName("button_flip");
+                myButton.disabled = false;
                 setTimeout(function () {
                     var dateTime = Date.now() / 1000;
                     console.log(dateTime);
